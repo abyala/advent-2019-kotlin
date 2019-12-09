@@ -1,6 +1,5 @@
 package com.abyala.advent.day7
 
-import java.util.concurrent.BlockingQueue
 import java.util.concurrent.Executors
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
@@ -25,7 +24,7 @@ class Day7(val program: String) {
     fun part1() = BASIC_PHASES.map { calculate(it, 0, 0) }.max()!!
     fun part2() = FEEDBACK_PHASES.map { calculate2(it)}.max()!!
 
-    private fun calculate(phases: IntArray, index: Int, lastValue: Int): Int =
+    private tailrec fun calculate(phases: IntArray, index: Int, lastValue: Int): Int =
         if (index >= phases.size) lastValue
         else calculate(
             phases,
