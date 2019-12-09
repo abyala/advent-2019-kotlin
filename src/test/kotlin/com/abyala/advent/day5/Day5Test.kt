@@ -1,7 +1,8 @@
 package com.abyala.advent.day5
 
-import com.abyala.advent.day5.Day5.Mode.IMMEDIATE
-import com.abyala.advent.day5.Day5.Mode.POSITION
+import com.abyala.advent.IntcodeComputer
+import com.abyala.advent.IntcodeComputer.Mode.IMMEDIATE
+import com.abyala.advent.IntcodeComputer.Mode.POSITION
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import org.junit.Test
@@ -13,7 +14,7 @@ class Day5Test {
 
     @Test
     fun `Test instruction parsing and iteration`() {
-        val instruction = Day5.Instruction.parse("1002")
+        val instruction = IntcodeComputer.Instruction.parse("1002")
         assertEquals(2, instruction.opCode)
 
         val iter = instruction.modeIterator()
@@ -24,17 +25,17 @@ class Day5Test {
 
     @Test
     fun `Part 1 - puzzle`() {
-        val day5 = Day5(readFile())
-        val output = day5.execute(1)
+        val IntcodeComputer = IntcodeComputer(readFile())
+        val output = IntcodeComputer.execute(1)
         assertTrue(output.passedAllTests())
         assertEquals(13087969, output.diagnosticCode)
     }
 
     @Test
     fun `Part 1 - test new instructions`() {
-        val day5 = Day5("3,0,4,0,99")
-        val output = day5.execute(123)
-        assertEquals("123, 0, 4, 0, 99", day5.registers.joinToString())
+        val IntcodeComputer = IntcodeComputer("3,0,4,0,99")
+        val output = IntcodeComputer.execute(123)
+        assertEquals("123, 0, 4, 0, 99", IntcodeComputer.registers.joinToString())
         assertTrue(output.passedAllTests())
         assertEquals(123, output.diagnosticCode)
     }
@@ -50,8 +51,8 @@ class Day5Test {
     }
 
     private fun verifyOutput(data: String, input: Int, expected: Int) {
-        val day5 = Day5(data)
-        val output = day5.execute(input)
+        val IntcodeComputer = IntcodeComputer(data)
+        val output = IntcodeComputer.execute(input)
         assertTrue(output.passedAllTests())
         assertEquals(expected, output.diagnosticCode)
     }

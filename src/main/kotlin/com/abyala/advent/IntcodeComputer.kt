@@ -1,47 +1,58 @@
-package com.abyala.advent.day5
+package com.abyala.advent
 
-import com.abyala.advent.day5.Day5.Mode.IMMEDIATE
-import com.abyala.advent.day5.Day5.Mode.POSITION
 import java.lang.IllegalArgumentException
+import java.util.concurrent.ArrayBlockingQueue
+import java.util.concurrent.BlockingQueue
+import java.util.concurrent.LinkedBlockingQueue
 
-class Day5(val registers: IntArray) {
+class IntcodeComputer(val registers: IntArray) {
+
     constructor(registers:String): this(registers.split(",").map (String::toInt).toIntArray())
 
     private var pc = 0
     private fun nextIndex() = pc++
-    private fun nextValue(mode: Mode = POSITION): Int = valueAt(nextIndex(), mode)
+    private fun nextValue(mode: Mode = Mode.POSITION): Int = valueAt(nextIndex(), mode)
     private fun valueAt(pos: Int, mode: Mode): Int = when (mode) {
-        POSITION -> registers[registers[pos]]
-        IMMEDIATE -> registers[pos]
+        Mode.POSITION -> registers[registers[pos]]
+        Mode.IMMEDIATE -> registers[pos]
     }
 
     data class Output(val diagnosticCode: Int, val testOutputs: List<Int>) {
         fun passedAllTests() = testOutputs.all { it == 0 }
     }
 
-    fun execute(input: Int): Output {
-        val outputs = mutableListOf<Int>()
+    fun execute(input: Int): Output = execute(intArrayOf(input))
+    fun execute(inputs: IntArray): Output {
+        val outputQueue = LinkedBlockingQueue<Int>()
+        execute(ArrayBlockingQueue(inputs.size, true, inputs.asList()), outputQueue)
+
+        val data = outputQueue.toList()
+        return Output(data.last(), data.dropLast(1))
+    }
+
+    fun execute(inputQueue: BlockingQueue<Int>, outputQueue: BlockingQueue<Int>) {
 
         while(true) {
-            val instruction = Instruction.parse(nextValue(IMMEDIATE).toString())
+            val instruction =
+                Instruction.parse(nextValue(Mode.IMMEDIATE).toString())
             val modeIterator = instruction.modeIterator()
             fun next() = nextValue(modeIterator.next())
             when (instruction.opCode) {
                 1 -> {
                     val sum = next() + next()
-                    val nextValue = nextValue(IMMEDIATE)
+                    val nextValue = nextValue(Mode.IMMEDIATE)
                     registers[nextValue] = sum
                 }
                 2 -> {
                     val product = next() * next()
-                    registers[nextValue(IMMEDIATE)] = product
+                    registers[nextValue(Mode.IMMEDIATE)] = product
                 }
                 3 -> {
-                    val nextValue = nextValue(IMMEDIATE)
-                    registers[nextValue] = input
+                    val nextValue = nextValue(Mode.IMMEDIATE)
+                    registers[nextValue] = inputQueue.take()
                 }
                 4 -> {
-                    outputs += next()
+                    outputQueue.put(next())
                 }
                 5 -> {
                     val check = next()
@@ -59,14 +70,14 @@ class Day5(val registers: IntArray) {
                 }
                 7 -> {
                     val storeThis = if (next() < next()) 1 else 0
-                    registers[nextValue(IMMEDIATE)] = storeThis
+                    registers[nextValue(Mode.IMMEDIATE)] = storeThis
                 }
                 8 -> {
                     val storeThis = if (next() == next()) 1 else 0
-                    registers[nextValue(IMMEDIATE)] = storeThis
+                    registers[nextValue(Mode.IMMEDIATE)] = storeThis
                 }
                 99 -> {
-                    return Output(outputs.last(), outputs.dropLast(1))
+                    return
                 }
                 else -> throw Exception("Unknown opCode ${instruction.opCode} at pc=${pc-1}")
             }
@@ -106,5 +117,6 @@ class Day5(val registers: IntArray) {
     }
 
     override fun toString(): String =
-            "Day 5 [registers=[${registers.joinToString()}]]"
+        "IntcodeComputer[registers=[${registers.joinToString()}]]"
 }
+

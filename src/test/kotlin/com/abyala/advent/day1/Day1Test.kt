@@ -5,7 +5,7 @@ import org.junit.Test
 import kotlin.test.assertEquals
 
 class Day1Test {
-    private val dir = "src/test/resources/day1"
+    private val dir = "src/test/resources"
     private val dataFile = "$dir/day1.txt"
 
     @Test
