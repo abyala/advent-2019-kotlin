@@ -10,7 +10,7 @@ class Day8Test {
 
     @Test
     fun `Part 1 - puzzle`() {
-        assertEquals(2562, Day8(readFile()).part12())
+        assertEquals(2562, Day8(readFile()).part1())
     }
 
     @Test
@@ -23,7 +23,7 @@ class Day8Test {
         println(Day8(readFile()).part2().pretty())
     }
 
-    fun String.pretty() = map {
+    private fun String.pretty() = map {
         when (it) {
             '1' -> 'X'
             '0' -> ' '
