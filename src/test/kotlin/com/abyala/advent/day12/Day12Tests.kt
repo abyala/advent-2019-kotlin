@@ -3,8 +3,6 @@ package com.abyala.advent.day12
 import com.abyala.advent.readFileAsListOfStrings
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
-import java.math.BigInteger
-import kotlin.math.sign
 
 class Day12Tests {
     private val dataFile = "src/test/resources/day12.txt"
