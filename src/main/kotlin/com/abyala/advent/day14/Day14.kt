@@ -62,7 +62,7 @@ class Day14(input: List<String>) {
             targetFuel - 1
         } else {
             val amountToAdd = (targetFuel * unusedOre.toDouble() / oreNeeded).toLong()
-            val newTarget = targetFuel + (amountToAdd.takeIf { it > 0 } ?: 1)
+            val newTarget = targetFuel + amountToAdd.coerceAtLeast(1)
             maxFuel(maxOre, orePerFuel, newTarget)
         }
     }
